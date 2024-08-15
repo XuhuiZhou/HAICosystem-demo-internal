@@ -13,6 +13,7 @@ def episode_list() -> None:
     tag_option = st.selectbox(
         "Which tag do you want to see?",
         ("haicosystem_debug", "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial0"),
+        index=1,
         placeholder="Select contact method...",
     )
     st.write("You selected:", tag_option)
@@ -22,7 +23,12 @@ def episode_list() -> None:
     st.session_state.episode_list_len = episode_list_len
     st.session_state.episode_list = episode_list
     try:
-        st.session_state.episode_code_name = [HaiEnvironmentProfile.get(episode.environment).codename for episode in episode_list]  # type: ignore
+        st.session_state.episode_code_name = []  # type: ignore
+        st.session_state.domain = []  # type: ignore
+        for i, episode in enumerate(episode_list):
+            environment = HaiEnvironmentProfile.get(pk=episode.environment)
+            st.session_state.episode_code_name.append(environment.codename)
+            st.session_state.domain.append(environment.domain)
     except Exception as e:
         st.session_state.episode_code_name = []
 
@@ -35,7 +41,7 @@ def display_episode() -> None:
         if st.session_state.episode_code_name:
             episode_choice = st.selectbox(
                 "Which episode would you like to see?",
-                [f"{str(i)}-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)],
+                [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)],
             )
             episode_number = episode_choice.split("-")[0]
         else:
