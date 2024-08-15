@@ -16,9 +16,10 @@ def role_mapping(role: str) -> str:
     }
     if 'AI' in role:
         return "ai"
-    if len(role.split()) > 1 and len(role.split()[1]) > 1:
+    elif len(role.split()) > 1 and role.split()[1]!="Info":
         return "human"
-    return role_mapping.get(role, "info")
+    else:
+        return role_mapping.get(role, "info")
 
 avatar_mapping = {
     "env": "🌍",
