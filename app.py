@@ -5,7 +5,7 @@ print(os.environ['REDIS_OM_URL'])
 from sotopia.database import EpisodeLog
 
 from haicosystem.utils.render import render_for_humans # type: ignore
-from haicosystem.protocols import HaiEnvironmentProfile
+from haicosystem.protocols import HaiEnvironmentProfile # type: ignore
 from haicosystemDemo.hai_stream import streamlit_rendering
 
 def episode_list() -> None:
