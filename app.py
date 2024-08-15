@@ -11,7 +11,7 @@ def episode_list() -> None:
     # Text input for episode number
     tag_option = st.selectbox(
         "Which tag do you want to see?",
-        ("haicosystem_debug", "haicosystem_trial_experiment_0"),
+        ("haicosystem_debug", "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial0"),
         placeholder="Select contact method...",
     )
     st.write("You selected:", tag_option)

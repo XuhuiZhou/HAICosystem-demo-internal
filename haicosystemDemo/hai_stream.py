@@ -2,17 +2,23 @@ import json
 import streamlit as st
 from haicosystem.protocols import messageForRendering # type: ignore
 
-role_mapping = {
-    "Background Info": "background",
-    "System": "info",
-    "Environment": "env",
-    "Observation": "obs",
-    "General": "info",
-    "Agent 1": "info",
-    "Agent 2": "info",
-    "Xuhui Zhou": "human",
-    "X AI": "ai",
-}
+def role_mapping(role: str) -> str:
+    role_mapping = {
+        "Background Info": "background",
+        "System": "info",
+        "Environment": "env",
+        "Observation": "obs",
+        "General": "info",
+        "Agent 1": "info",
+        "Agent 2": "info",
+        "User": "human",
+        "Echo AI": "ai",
+    }
+    if 'AI' in role:
+        return "ai"
+    if len(role.split()) > 1 and len(role.split()[1]) > 1:
+        return "human"
+    return role_mapping.get(role, "info")
 
 avatar_mapping = {
     "env": "🌍",
@@ -21,11 +27,14 @@ avatar_mapping = {
 
 def streamlit_rendering(messages: list[messageForRendering]) -> None:
     for index, message in enumerate(messages):
-        role = role_mapping.get(message["role"], "info")
+        role = role_mapping(message["role"])
         content = message["content"]
         
         if role == "obs" or message.get("type") == "action":
-            content = json.loads(content)
+            try:
+                content = json.loads(content)
+            except json.JSONDecodeError:
+                pass
 
         with st.chat_message(role, avatar=avatar_mapping.get(role, None)):
             if isinstance(content, dict):
