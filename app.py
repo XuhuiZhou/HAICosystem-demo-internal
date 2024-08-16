@@ -52,7 +52,6 @@ def display_episode() -> None:
         episode_index = 0
         if st.session_state.episode_code_name:
             if st.session_state.coming_from_link:
-                st.write(f"Query param: {st.query_params.pk}")
                 episode_index = [i for i in range(st.session_state.episode_list_len) if st.session_state.episode_list[i].pk == st.query_params.pk][0]
                 st.session_state.coming_from_link = False
             episode_choice = st.selectbox(
