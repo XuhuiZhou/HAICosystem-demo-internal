@@ -8,8 +8,15 @@ from haicosystem.utils.render import render_for_humans # type: ignore
 from haicosystem.protocols import HaiEnvironmentProfile # type: ignore
 from haicosystemDemo.hai_stream import streamlit_rendering
 
-def update_params():
-    st.query_params.pk = st.session_state.qp
+def init_params():
+    if "pk" not in st.query_params:
+        st.query_params.pk = ""
+        st.session_state.coming_from_link = False
+    else:
+        st.session_state.coming_from_link = True
+
+def update_params(pk: str = ""):
+    st.query_params.pk = pk
 
 
 def episode_list() -> None:
@@ -42,18 +49,23 @@ def display_episode() -> None:
         st.write("No episode found.")
     else:
         # Select an episode
+        episode_index = 0
         if st.session_state.episode_code_name:
+            if st.session_state.coming_from_link:
+                st.write(f"Query param: {st.query_params.pk}")
+                episode_index = [i for i in range(st.session_state.episode_list_len) if st.session_state.episode_list[i].pk == st.query_params.pk][0]
+                st.session_state.coming_from_link = False
             episode_choice = st.selectbox(
                 "Which episode would you like to see?",
-                [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)]
+                [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)],
+                index=episode_index,
             )
             episode_number = episode_choice.split("-")[0]
         else:
             episode_number = st.text_input(f"Enter episode number (0-{st.session_state.episode_list_len}):", value="0")
         episode = st.session_state.episode_list[int(episode_number)]  # type: ignore
         st.write(f"Episode retrieved with pk: {episode.pk}")
-        st.session_state.qp = episode.pk
-        update_params()
+        update_params(episode.pk)
         assert isinstance(episode, EpisodeLog)
         messages = render_for_humans(episode)
         streamlit_rendering(messages)
@@ -61,6 +73,8 @@ def display_episode() -> None:
 st.title("HAICosystem Episode Rendering")
 st.session_state.episode_list_len = 0
 st.session_state.episode_list = []
+
+init_params()
 episode_list()
 display_episode()
 
