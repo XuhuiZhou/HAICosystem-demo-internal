@@ -8,6 +8,10 @@ from haicosystem.utils.render import render_for_humans # type: ignore
 from haicosystem.protocols import HaiEnvironmentProfile # type: ignore
 from haicosystemDemo.hai_stream import streamlit_rendering
 
+def update_params():
+    st.query_params.pk = st.session_state.qp
+
+
 def episode_list() -> None:
     # Text input for episode number
     tag_option = st.selectbox(
@@ -41,13 +45,15 @@ def display_episode() -> None:
         if st.session_state.episode_code_name:
             episode_choice = st.selectbox(
                 "Which episode would you like to see?",
-                [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)],
+                [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)]
             )
             episode_number = episode_choice.split("-")[0]
         else:
             episode_number = st.text_input(f"Enter episode number (0-{st.session_state.episode_list_len}):", value="0")
         episode = st.session_state.episode_list[int(episode_number)]  # type: ignore
-        st.write(f"Episode retrieved: {episode.pk}")
+        st.write(f"Episode retrieved with pk: {episode.pk}")
+        st.session_state.qp = episode.pk
+        update_params()
         assert isinstance(episode, EpisodeLog)
         messages = render_for_humans(episode)
         streamlit_rendering(messages)
