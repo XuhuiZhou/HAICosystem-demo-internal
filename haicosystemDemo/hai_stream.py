@@ -16,7 +16,7 @@ def role_mapping(role: str) -> str:
     }
     if 'AI' in role:
         return "ai"
-    elif len(role.split()) > 1 and role.split()[1]!="Info":
+    elif len(role.split()) > 1 and role.split()[1]!="Info" and len(role.split()[1])>1:
         return "human"
     else:
         return role_mapping.get(role, "info")
@@ -38,6 +38,7 @@ def streamlit_rendering(messages: list[messageForRendering]) -> None:
                 pass
 
         with st.chat_message(role, avatar=avatar_mapping.get(role, None)):
+            st.write(f"**{message['role']}**")
             if isinstance(content, dict):
                 st.json(content)
             elif role == "info":
@@ -61,5 +62,3 @@ def streamlit_rendering(messages: list[messageForRendering]) -> None:
                 )
             else:
                 st.markdown(content.replace("\n", "<br />"), unsafe_allow_html=True)
-
-

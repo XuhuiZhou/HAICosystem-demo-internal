@@ -12,14 +12,32 @@ def init_params():
     if "pk" not in st.query_params:
         st.query_params.pk = ""
         st.session_state.coming_from_link = False
-    else:
+    elif "coming_from_link" not in st.session_state:
         st.session_state.coming_from_link = True
+    print("Coming from link:", st.session_state.coming_from_link)
+    print("Query params:", st.query_params)
 
 def update_params(pk: str = ""):
     st.query_params.pk = pk
 
+@st.cache_data(max_entries=1)
+def episode_list(tag_option: str) -> tuple[list[EpisodeLog], int, list[str], list[str]]:
+    st.write("You selected:", tag_option)
+    print("You selected:", tag_option)
+    episode_list: list[EpisodeLog] = EpisodeLog.find(EpisodeLog.tag == tag_option).all()
+    episode_list_len = max(len(episode_list)-1, 0)
+    try:
+        episode_code_name = []  # type: ignore
+        domain = []  # type: ignore
+        for i, episode in enumerate(episode_list):
+            environment = HaiEnvironmentProfile.get(pk=episode.environment)
+            episode_code_name.append(environment.codename)
+            domain.append(environment.domain)
+    except Exception as e:
+        episode_code_name = []
+    return episode_list, episode_list_len, episode_code_name, domain
 
-def episode_list() -> None:
+def display_episode() -> None:
     # Text input for episode number
     tag_option = st.selectbox(
         "Which tag do you want to see?",
@@ -27,38 +45,26 @@ def episode_list() -> None:
         index=1,
         placeholder="Select contact method...",
     )
-    st.write("You selected:", tag_option)
-    print("You selected:", tag_option)
-    episode_list: list[EpisodeLog] = EpisodeLog.find(EpisodeLog.tag == tag_option).all()
-    episode_list_len = max(len(episode_list)-1, 0)
-    st.session_state.episode_list_len = episode_list_len
-    st.session_state.episode_list = episode_list
-    try:
-        st.session_state.episode_code_name = []  # type: ignore
-        st.session_state.domain = []  # type: ignore
-        for i, episode in enumerate(episode_list):
-            environment = HaiEnvironmentProfile.get(pk=episode.environment)
-            st.session_state.episode_code_name.append(environment.codename)
-            st.session_state.domain.append(environment.domain)
-    except Exception as e:
-        st.session_state.episode_code_name = []
-
-@st.fragment()
-def display_episode() -> None:
+    st.session_state.episode_list, st.session_state.episode_list_len, st.session_state.episode_code_name, st.session_state.domain = episode_list(tag_option)
     if st.session_state.episode_list_len == 0:
         st.write("No episode found.")
     else:
         # Select an episode
-        episode_index = 0
         if st.session_state.episode_code_name:
             if st.session_state.coming_from_link:
                 episode_index = [i for i in range(st.session_state.episode_list_len) if st.session_state.episode_list[i].pk == st.query_params.pk][0]
                 st.session_state.coming_from_link = False
-            episode_choice = st.selectbox(
-                "Which episode would you like to see?",
-                [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)],
-                index=episode_index,
-            )
+            try:
+                episode_choice = st.selectbox(
+                    "Which episode would you like to see?",
+                    [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)],
+                    index=episode_index,
+                )
+            except NameError:
+                episode_choice = st.selectbox(
+                    "Which episode would you like to see?",
+                    [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)],
+                )
             episode_number = episode_choice.split("-")[0]
         else:
             episode_number = st.text_input(f"Enter episode number (0-{st.session_state.episode_list_len}):", value="0")
@@ -68,12 +74,12 @@ def display_episode() -> None:
         assert isinstance(episode, EpisodeLog)
         messages = render_for_humans(episode)
         streamlit_rendering(messages)
+    st.write("**End of episode**")
 
 st.title("HAICosystem Episode Rendering")
 st.session_state.episode_list_len = 0
 st.session_state.episode_list = []
 
 init_params()
-episode_list()
 display_episode()
-
+st.write("**End of rendering**")
