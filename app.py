@@ -6,7 +6,7 @@ from sotopia.database import EpisodeLog
 
 from haicosystem.utils.render import render_for_humans # type: ignore
 from haicosystem.protocols import HaiEnvironmentProfile # type: ignore
-from haicosystemDemo.hai_stream import streamlit_rendering
+from haicosystemDemo.hai_stream import render_hai_environment_profile, streamlit_rendering
 
 def init_params():
     if "pk" not in st.query_params:
@@ -25,7 +25,8 @@ def episode_list(tag_option: str) -> tuple[list[EpisodeLog], int, list[str], lis
     st.write("You selected:", tag_option)
     print("You selected:", tag_option)
     episode_list: list[EpisodeLog] = EpisodeLog.find(EpisodeLog.tag == tag_option).all()
-    episode_list_len = max(len(episode_list)-1, 0)
+    episode_list_len = max(len(episode_list), 0)
+    print("Episode list length:", episode_list_len)
     try:
         episode_code_name = []  # type: ignore
         domain = []  # type: ignore
@@ -41,8 +42,13 @@ def display_episode() -> None:
     # Text input for episode number
     tag_option = st.selectbox(
         "Which tag do you want to see?",
-        ("haicosystem_debug", "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial0"),
-        index=1,
+        (
+            "haicosystem_debug", 
+            "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial0",
+            "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial2",
+            "benchmark_gpt-3.5-turbo_gpt-4o_gpt-4o_haicosystem_trial2",
+        ),
+        index=2,
         placeholder="Select contact method...",
     )
     st.session_state.episode_list, st.session_state.episode_list_len, st.session_state.episode_code_name, st.session_state.domain = episode_list(tag_option)
@@ -69,6 +75,9 @@ def display_episode() -> None:
         else:
             episode_number = st.text_input(f"Enter episode number (0-{st.session_state.episode_list_len}):", value="0")
         episode = st.session_state.episode_list[int(episode_number)]  # type: ignore
+        if st.session_state.episode_code_name:
+            episode_env = HaiEnvironmentProfile.get(pk=episode.environment)
+            render_hai_environment_profile(episode_env)
         st.write(f"Episode retrieved with pk: {episode.pk}")
         update_params(episode.pk)
         assert isinstance(episode, EpisodeLog)
