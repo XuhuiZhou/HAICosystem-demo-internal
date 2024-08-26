@@ -8,6 +8,14 @@ from haicosystem.utils.render import render_for_humans # type: ignore
 from haicosystem.protocols import HaiEnvironmentProfile # type: ignore
 from haicosystemDemo.hai_stream import render_hai_environment_profile, streamlit_rendering
 
+
+TAGS = (
+    "haicosystem_debug", 
+    "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial0",
+    "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial2",
+    "benchmark_gpt-3.5-turbo_gpt-4o_gpt-4o_haicosystem_trial2",
+)
+
 def init_params():
     if "pk" not in st.query_params:
         st.query_params.pk = ""
@@ -40,15 +48,19 @@ def episode_list(tag_option: str) -> tuple[list[EpisodeLog], int, list[str], lis
 
 def display_episode() -> None:
     # Text input for episode number
+    if st.session_state.coming_from_link:
+        episode = EpisodeLog.get(pk=st.query_params.pk)
+        tag = episode.tag
+        print("Tag:", tag)
+        tag_index = TAGS.index(tag)
+        print("Tag index:", tag_index)
+    else:
+        tag_index = 2 # default tag index
+
     tag_option = st.selectbox(
         "Which tag do you want to see?",
-        (
-            "haicosystem_debug", 
-            "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial0",
-            "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial2",
-            "benchmark_gpt-3.5-turbo_gpt-4o_gpt-4o_haicosystem_trial2",
-        ),
-        index=2,
+        TAGS,
+        index=tag_index,
         placeholder="Select contact method...",
     )
     st.session_state.episode_list, st.session_state.episode_list_len, st.session_state.episode_code_name, st.session_state.domain = episode_list(tag_option)
@@ -58,7 +70,10 @@ def display_episode() -> None:
         # Select an episode
         if st.session_state.episode_code_name:
             if st.session_state.coming_from_link:
-                episode_index = [i for i in range(st.session_state.episode_list_len) if st.session_state.episode_list[i].pk == st.query_params.pk][0]
+                for i in range(st.session_state.episode_list_len):
+                    if st.session_state.episode_list[i].pk == st.query_params.pk:
+                        episode_index = i
+                        break
                 st.session_state.coming_from_link = False
             try:
                 episode_choice = st.selectbox(
