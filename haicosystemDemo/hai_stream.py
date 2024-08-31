@@ -23,7 +23,8 @@ def role_mapping(role: str) -> str:
 
 avatar_mapping = {
     "env": "🌍",
-    "obs": "🌍"
+    "obs": "🌍",
+    "info": "ℹ️",
 }
 
 def truncate_text(text, word_limit=15):
@@ -31,6 +32,49 @@ def truncate_text(text, word_limit=15):
     if len(words) > word_limit:
         return ' '.join(words[:word_limit]) + '...'
     return text
+
+def parse_evaluation(content: str) -> str:
+    # Split the content into sections and scores
+    sections, scores = content.split('====================================================================================================\nEval scores: ')
+    
+    # Define possible sections to parse
+    possible_sections = [
+        'believability', 'relationship', 'knowledge', 'secret',
+        'social_rules', 'financial_and_material_benefits', 
+        'targeted_safety_risks', 'system_and_operational_risks', 
+        'content_safety_risks', 'societal_risks', 'legal_and_rights_related_risks', 'efficiency', 'goal'
+    ]
+    
+    # Initialize dictionary to store parsed sections
+    parsed_sections = {}
+    
+    # Loop through possible sections and extract content
+    for section in possible_sections:
+        if section in sections:
+            if section != 'goal':
+                split_content = sections.split(f'{section}:')
+                content_part = split_content[1].split(f'{possible_sections[possible_sections.index(section) + 1]}:')[0] 
+                parsed_sections[section] = content_part.strip()
+            elif section == 'goal':
+                split_content = sections.split(f'{section}:')
+                content_part = split_content[1]
+                parsed_sections[section] = content_part.strip()
+    
+    # Convert scores to a dictionary
+    eval_scores = eval(scores)
+    del eval_scores['overall_score']
+    
+    # Prepare the markdown string
+    markdown_string = ""
+    
+    # Add each section to the markdown string
+    for section, text in parsed_sections.items():
+        markdown_string += f"\n**{section.replace('_', ' ').capitalize()}**\n"
+        markdown_string += f"{text}\n\n"
+    
+    markdown_string += "\n**Evaluation Scores**\n"
+    markdown_string += "```json\n" + json.dumps(eval_scores, indent=4) + "\n```"
+    return markdown_string
 
 def render_hai_environment_profile(profile: HaiEnvironmentProfile):
     # Render the codename as a subheader
@@ -46,7 +90,7 @@ def render_hai_environment_profile(profile: HaiEnvironmentProfile):
         </div>
         <div style="display: inline-block; background-color: #ffe8cc; color: #f76707; padding: 4px 8px; border-radius: 12px;">
             Toolkits: {', '.join(profile.toolkits) if profile.toolkits else 'None'}
-        </div>
+        </div> 
         """, unsafe_allow_html=True
     )
 
@@ -55,7 +99,7 @@ def render_hai_environment_profile(profile: HaiEnvironmentProfile):
     
     with col1:
         truncated_human_goal = truncate_text(profile.agent_goals[0])
-        st.markdown("**Human User Goal**")
+        st.markdown(f"**Human User Goal** {'😈' if profile.agent_intent_labels[0]=='malicious' else '😇'}")
         st.markdown(
                 f"""
                 <div style="background-color: #D1E9F6; padding: 10px; border-radius: 10px; margin-bottom: 5px;">
@@ -116,7 +160,11 @@ def streamlit_rendering(messages: list[messageForRendering]) -> None:
                 pass
 
         with st.chat_message(role, avatar=avatar_mapping.get(role, None)):
-            st.write(f"**{message['role']}**")
+            if message['role'] == "Agent 1" or message['role'] == "Agent 2":
+                st.write(f"**Evaluation for {message['role']}**")
+                content = parse_evaluation(content)
+            else:
+                st.write(f"**{message['role']}**")
             if isinstance(content, dict):
                 st.json(content)
             elif role == "info":
@@ -124,7 +172,7 @@ def streamlit_rendering(messages: list[messageForRendering]) -> None:
                     f"""
                     <div style="background-color: lightblue; padding: 10px; border-radius: 5px;">
                         {content}
-                    </div>
+</div>
                     """,
                     unsafe_allow_html=True
                 )

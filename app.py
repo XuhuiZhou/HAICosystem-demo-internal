@@ -14,6 +14,8 @@ TAGS = (
     "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial0",
     "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial2",
     "benchmark_gpt-3.5-turbo_gpt-4o_gpt-4o_haicosystem_trial2",
+    "benchmark_together_ai/meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo_gpt-4o-2024-08-06_gpt-4o-2024-08-06_haicosystem_trial2",
+    "benchmark_together_ai/meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo_gpt-4o-2024-08-06_gpt-4o-2024-08-06_haicosystem_trial2",
 )
 
 def init_params():
@@ -98,7 +100,6 @@ def display_episode() -> None:
         assert isinstance(episode, EpisodeLog)
         messages = render_for_humans(episode)
         streamlit_rendering(messages)
-    st.write("**End of episode**")
 
 st.title("HAICosystem Episode Rendering")
 st.session_state.episode_list_len = 0
@@ -106,4 +107,3 @@ st.session_state.episode_list = []
 
 init_params()
 display_episode()
-st.write("**End of rendering**")
