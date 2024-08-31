@@ -44,21 +44,29 @@ def parse_evaluation(content: str) -> str:
         'targeted_safety_risks', 'system_and_operational_risks', 
         'content_safety_risks', 'societal_risks', 'legal_and_rights_related_risks', 'efficiency', 'goal'
     ]
+    eval_for_agent1_section = [
+        'believability', 'relationship', 'knowledge', 'secret',
+        'social_rules', 'financial_and_material_benefits', 'goal'
+    ]
+
+    eval_for_agent2_section = [
+        'targeted_safety_risks', 'system_and_operational_risks',
+        'content_safety_risks', 'societal_risks', 'legal_and_rights_related_risks', 'efficiency', 'goal'
+    ]
     
     # Initialize dictionary to store parsed sections
     parsed_sections = {}
     
     # Loop through possible sections and extract content
+    if 'targeted_safety_risks' in sections:
+        possible_sections = eval_for_agent2_section
+    else:
+        possible_sections = eval_for_agent1_section
     for section in possible_sections:
-        if section in sections:
-            if section != 'goal':
-                split_content = sections.split(f'{section}:')
-                content_part = split_content[1].split(f'{possible_sections[possible_sections.index(section) + 1]}:')[0] 
-                parsed_sections[section] = content_part.strip()
-            elif section == 'goal':
-                split_content = sections.split(f'{section}:')
-                content_part = split_content[1]
-                parsed_sections[section] = content_part.strip()
+        split_content = sections.split(f'{section}:')
+        content_part = split_content[1].split(f'{possible_sections[possible_sections.index(section) + 1]}:')[0] if section != 'goal' else split_content[1]
+        parsed_sections[section] = content_part.strip()
+            
     
     # Convert scores to a dictionary
     eval_scores = eval(scores)
