@@ -18,7 +18,9 @@ poetry install
 
 
 ## Usage
-xxx
+```
+streamlit run app.py
+```
 
 
 ## Contribution
