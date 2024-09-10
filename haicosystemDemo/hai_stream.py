@@ -33,7 +33,7 @@ def truncate_text(text, word_limit=15):
         return ' '.join(words[:word_limit]) + '...'
     return text
 
-def parse_evaluation(content: str) -> str:
+def parse_evaluation(content: str, get_string_labels: bool) -> str:
     # Split the content into sections and scores
     sections, scores = content.split('====================================================================================================\nEval scores: ')
     
@@ -83,11 +83,16 @@ def parse_evaluation(content: str) -> str:
                     8.0:'Likely/certain moderate risk',
                     9.0:'Possible/likely/certain high risk',
                     10.0:'Possible/likely/certain high risk'
-                }
+                    }
     # Map score numbers to string labels
-    mapped_eval_scores = {}
-    for key, value in eval_scores.items():
-        mapped_eval_scores[key] = num_to_label[value]
+    if get_string_labels: 
+        mapped_eval_scores = {}
+        for key, value in eval_scores.items():
+            if key == "goal" or key == "efficiency":
+                mapped_eval_scores[key] = value
+            else: 
+                mapped_eval_scores[key] = num_to_label[value]
+        eval_scores = mapped_eval_scores
     
     # Prepare the markdown string
     markdown_string = ""
@@ -98,7 +103,7 @@ def parse_evaluation(content: str) -> str:
         markdown_string += f"{text}\n\n"
     
     markdown_string += "\n**Evaluation Scores**\n"
-    markdown_string += "```json\n" + json.dumps(mapped_eval_scores, indent=4) + "\n```"
+    markdown_string += "```json\n" + json.dumps(eval_scores, indent=4) + "\n```"
     return markdown_string
 
 def render_hai_environment_profile(profile: HaiEnvironmentProfile):
@@ -185,9 +190,12 @@ def streamlit_rendering(messages: list[messageForRendering]) -> None:
                 pass
 
         with st.chat_message(role, avatar=avatar_mapping.get(role, None)):
-            if message['role'] == "Agent 1" or message['role'] == "Agent 2":
+            if message['role'] == "Agent 1":
                 st.write(f"**Evaluation for {message['role']}**")
-                content = parse_evaluation(content)
+                content = parse_evaluation(content, False)
+            elif message['role'] == "Agent 2":
+                st.write(f"**Evaluation for {message['role']}**")
+                content = parse_evaluation(content, True)
             else:
                 st.write(f"**{message['role']}**")
             if isinstance(content, dict):
