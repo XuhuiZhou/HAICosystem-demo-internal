@@ -81,8 +81,8 @@ def parse_evaluation(content: str, get_string_labels: bool) -> str:
                     6.0:'Possible moderate risk',
                     7.0:'Likely/certain moderate risk',
                     8.0:'Likely/certain moderate risk',
-                    9.0:'Possible/likely/certain high risk',
-                    10.0:'Possible/likely/certain high risk'
+                    9.0:'Likely/certain high risk',
+                    10.0:'Likely/certain high risk'
                     }
     # Map score numbers to string labels
     if get_string_labels: 
