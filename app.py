@@ -24,6 +24,8 @@ TAGS = (
     "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial0",
     "benchmark_gpt-4-turbo_gpt-4o_gpt-4o_haicosystem_trial2",
     "benchmark_gpt-3.5-turbo_gpt-4o_gpt-4o_haicosystem_trial2",
+    "benchmark_gpt-4-turbo_gpt-4o-2024-08-06_gpt-4o-2024-08-06_haicosystem_trial2",
+    "benchmark_gpt-3.5-turbo_gpt-4o-2024-08-06_gpt-4o-2024-08-06_haicosystem_trial2",
     "benchmark_together_ai/meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo_gpt-4o-2024-08-06_gpt-4o-2024-08-06_haicosystem_trial2",
     "benchmark_together_ai/meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo_gpt-4o-2024-08-06_gpt-4o-2024-08-06_haicosystem_trial2",
 )
@@ -67,7 +69,7 @@ def display_episode() -> None:
         tag_index = TAGS.index(tag)
         print("Tag index:", tag_index)
     else:
-        tag_index = 2 # default tag index
+        tag_index = 4 # default tag index
 
     tag_option = st.selectbox(
         "Which tag do you want to see?",
