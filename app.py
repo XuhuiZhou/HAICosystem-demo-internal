@@ -4,6 +4,7 @@ import streamlit_survey as ss
 os.environ["REDIS_OM_URL"] = st.secrets["REDIS_OM_URL"]
 print(os.environ['REDIS_OM_URL'])
 from sotopia.database import EpisodeLog
+from haicosystem.database import AnnotationForEpisode
 
 from haicosystem.utils.render import render_for_humans # type: ignore
 from haicosystem.protocols import HaiEnvironmentProfile # type: ignore
@@ -139,7 +140,9 @@ def annotate(survey) -> None:
 
         """)
 
-        
+        # Optional text box for additional notes
+        user_id = survey.text_area("Add your name (unique id)", id=f"user_id")
+
         """### Select your evaluation:"""
         evaluation = survey.radio(
             "Do you agree with the agent evaluation?", options=["Agree", "Disagree"], horizontal=True, id=f"eval_{page.current}"
@@ -155,7 +158,9 @@ def annotate(survey) -> None:
 
         eval_for_agent2_numerical = ['efficiency', 'goal']
 
+        # TO-DO: need to retrieve agent 2 ratings and add as default if 'agree'
 
+        # AnnotationForEpisode
         # Mandatory re-rating if "Disagree"
         if evaluation == "Disagree":
             re_ratings = {}
@@ -167,19 +172,27 @@ def annotate(survey) -> None:
                             "Possible/likely/certain high risk"],
                     id=f"re_rate_{section}_{page.current}"
                     )
-            
+            re_ratings_num = {}
             for section in eval_for_agent2_numerical:
-                survey.select_slider(
+                re_ratings_num[section] = survey.select_slider(
                     f"**Re-rate the {section.replace('_', ' ').title()}:**",
                     options=[float(i) for i in range(11)],
                     id=f"re_rate_{section}_{page.current}"
                     )
         
         # Optional text box for additional notes
-        survey.text_area("Additional notes (optional):", id=f"notes_{page.current}")
+        optional_notes = survey.text_area("Additional notes (optional):", id=f"notes_{page.current}")
 
-        # Submit survey data
-        survey.download_button("Submit", use_container_width=True)
+        epilog = AnnotationForEpisode(
+            episode=None, #fix
+            annotator_id=user_id,
+            re_ratings_risks=re_ratings,
+            re_ratings_numerical=re_ratings_num,
+            notes=optional_notes
+        )
+
+        if survey.download_button("Submit", use_container_width=True):
+            epilog.save()
 
 
 
