@@ -1,12 +1,23 @@
 import os
 import streamlit as st
+import streamlit_survey as ss
+
+import redis
+import json
+import uuid
+
 os.environ["REDIS_OM_URL"] = st.secrets["REDIS_OM_URL"]
 print(os.environ['REDIS_OM_URL'])
+
+# Connect to Redis
+redis_client = redis.Redis.from_url(os.environ["REDIS_OM_URL"])
+
 from sotopia.database import EpisodeLog
 
 from haicosystem.utils.render import render_for_humans # type: ignore
 from haicosystem.protocols import HaiEnvironmentProfile # type: ignore
 from haicosystemDemo.hai_stream import render_hai_environment_profile, streamlit_rendering
+from haicosystemDemo.annotate import annotate
 
 
 TAGS = (
@@ -103,9 +114,26 @@ def display_episode() -> None:
         messages = render_for_humans(episode)
         streamlit_rendering(messages)
 
+def get_unique_id():
+    """Generate or retrieve a unique identifier for the user."""
+    if "user_id" not in st.session_state:
+        # Generate a unique identifier for the user
+        st.session_state["user_id"] = str(uuid.uuid4())
+    return st.session_state["user_id"]
+
+def store_survey_response(survey_id, user_id, response_data):
+    """Store the survey response in Redis with a unique key for the user."""
+    response_key = f"survey:{survey_id}:response:{user_id}"
+    redis_client.set(response_key, json.dumps(response_data))
+
 st.title("HAICosystem Episode Rendering")
 st.session_state.episode_list_len = 0
 st.session_state.episode_list = []
 
 init_params()
 display_episode()
+
+survey = ss.StreamlitSurvey()
+
+if st.checkbox("Enable Annotation"):
+    annotate(survey)

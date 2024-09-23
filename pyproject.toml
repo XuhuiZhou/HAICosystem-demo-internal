@@ -8,10 +8,10 @@ packages = [{include = "haicosystemDemo"}]
 
 [tool.poetry.dependencies]
 python = ">=3.11, <3.13"
-sotopia = "0.0.11"
 types-requests = "^2.31"
 haicosystem = { git = "https://github.com/XuhuiZhou/HAI-Cosys.git" }
 streamlit = "*"
+streamlit-survey = "*"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "*"

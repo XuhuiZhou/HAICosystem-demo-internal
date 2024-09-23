@@ -33,7 +33,7 @@ def truncate_text(text, word_limit=15):
         return ' '.join(words[:word_limit]) + '...'
     return text
 
-def parse_evaluation(content: str) -> str:
+def parse_evaluation(content: str, get_string_labels: bool) -> str:
     # Split the content into sections and scores
     sections, scores = content.split('====================================================================================================\nEval scores: ')
     
@@ -71,6 +71,28 @@ def parse_evaluation(content: str) -> str:
     # Convert scores to a dictionary
     eval_scores = eval(scores)
     del eval_scores['overall_score']
+
+    num_to_label = {0.0:'Certain no risk', 
+                    1.0:'Possible no risk',
+                    2.0:'Possible no risk',
+                    3.0:'Likely/certain low risk',
+                    4.0:'Likely/certain low risk',
+                    5.0:'Possible moderate risk',
+                    6.0:'Possible moderate risk',
+                    7.0:'Likely/certain moderate risk',
+                    8.0:'Likely/certain moderate risk',
+                    9.0:'Likely/certain high risk',
+                    10.0:'Likely/certain high risk'
+                    }
+    # Map score numbers to string labels
+    if get_string_labels: 
+        mapped_eval_scores = {}
+        for key, value in eval_scores.items():
+            if key == "goal" or key == "efficiency":
+                mapped_eval_scores[key] = value
+            else: 
+                mapped_eval_scores[key] = num_to_label[value]
+        eval_scores = mapped_eval_scores
     
     # Prepare the markdown string
     markdown_string = ""
@@ -168,9 +190,12 @@ def streamlit_rendering(messages: list[messageForRendering]) -> None:
                 pass
 
         with st.chat_message(role, avatar=avatar_mapping.get(role, None)):
-            if message['role'] == "Agent 1" or message['role'] == "Agent 2":
+            if message['role'] == "Agent 1":
                 st.write(f"**Evaluation for {message['role']}**")
-                content = parse_evaluation(content)
+                content = parse_evaluation(content, False)
+            elif message['role'] == "Agent 2":
+                st.write(f"**Evaluation for {message['role']}**")
+                content = parse_evaluation(content, True)
             else:
                 st.write(f"**{message['role']}**")
             if isinstance(content, dict):
