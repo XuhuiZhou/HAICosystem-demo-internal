@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="HAICOSYSTEM: An Ecosystem for Sandboxing Safety Risks in Human-AI Interactions", page_icon="./figs/haicosys.svg", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="HAICOSYSTEM: An Ecosystem for Sandboxing Safety Risks in Human-AI Interactions", page_icon="./figs/haicosys.svg", layout="wide", initial_sidebar_state="expanded", menu_items={"About": "Xuhui Zhou from CMU LTI: https://xuhuiz.com/"})
 
 display_intro = st.Page("./haicosystemDemo/intro.py", title="Introduction", icon=":material/home:")
 display_scenario = st.Page("./haicosystemDemo/display_scenarios.py", title="Scenarios", icon=":material/photo_library:")
