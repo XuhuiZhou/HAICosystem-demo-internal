@@ -3,6 +3,7 @@ import base64
 from haicosystem.protocols import HaiEnvironmentProfile
 from haicosystemDemo.hai_stream import render_hai_environment_profile
 import altair as alt
+from streamlit_extras.stylable_container import stylable_container
 from haicosystemDemo.elements import stylable_button
 # from haicosystemDemo.display_episode import display_episode
 
