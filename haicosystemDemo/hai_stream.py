@@ -1,6 +1,7 @@
 import json
 import streamlit as st
 from haicosystem.protocols import messageForRendering, HaiEnvironmentProfile # type: ignore
+from sotopia.envs.parallel import render_text_for_environment
 
 def role_mapping(role: str) -> str:
     role_mapping = {
@@ -87,49 +88,38 @@ def parse_evaluation(content: str) -> str:
 def render_hai_environment_profile(profile: HaiEnvironmentProfile):
     # Render the codename as a subheader
     # Render the scenario with domain and realism in styled tags
-    st.markdown(f"**Scenario**: {profile.scenario}")
+    processed_human_goal = render_text_for_environment(profile.agent_goals[0]).replace('\n', '<br>')
+    processed_agent_goal = render_text_for_environment(profile.agent_goals[1]).replace('\n', '<br>')
     st.markdown(
         f"""
-        <div style="display: inline-block; background-color: #e0f7fa; color: #0077b6; padding: 4px 8px; border-radius: 12px; margin-right: 8px; margin-bottom: 20px;"">
-            Domain: {profile.domain}
+        <div style="background-color: #f9f9f9; padding: 10px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
+            <p><strong>Scenario</strong>: {profile.scenario}</p>
+            <div style="display: inline-block; background-color: #e0f7fa; color: #0077b6; padding: 4px 8px; border-radius: 12px; margin-right: 8px; margin-bottom: 20px;">
+                Domain: {profile.domain}
+            </div>
+            <div style="display: inline-block; background-color: #e0f7fa; color: #0077b6; padding: 4px 8px; border-radius: 12px; margin-right: 8px;">
+                Realism Level: {profile.realism}
+            </div>
+            <div style="display: inline-block; background-color: #ffe8cc; color: #f76707; padding: 4px 8px; border-radius: 12px;">
+                Toolkits: {', '.join(profile.toolkits) if profile.toolkits else 'None'}
+            </div>
+            <div style="margin-top: 20px;">
+                <div style="display: inline-block; width: 48%; vertical-align: top;">
+                    <p><strong>Human User Goal</strong> {'😈' if profile.agent_intent_labels[0]=='malicious' else '😇'}</p>
+                    <div style="background-color: #D1E9F6; padding: 10px; border-radius: 10px; margin-bottom: 5px;">
+                        <p class="truncate">{processed_human_goal}</p>
+                    </div>
+                </div>
+                <div style="display: inline-block; width: 48%; vertical-align: top;">
+                    <p><strong>AI Agent Goal</strong></p>
+                    <div style="background-color: #D1E9F6; padding: 10px; border-radius: 10px; margin-bottom: 5px;">
+                        <p class="truncate">{processed_agent_goal}</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div style="display: inline-block; background-color: #e0f7fa; color: #0077b6; padding: 4px 8px; border-radius: 12px; margin-right: 8px;">
-            Realism Level: {profile.realism}
-        </div>
-        <div style="display: inline-block; background-color: #ffe8cc; color: #f76707; padding: 4px 8px; border-radius: 12px;">
-            Toolkits: {', '.join(profile.toolkits) if profile.toolkits else 'None'}
-        </div> 
         """, unsafe_allow_html=True
     )
-
-    # Render the goals in two columns
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        truncated_human_goal = truncate_text(profile.agent_goals[0])
-        st.markdown(f"**Human User Goal** {'😈' if profile.agent_intent_labels[0]=='malicious' else '😇'}")
-        st.markdown(
-                f"""
-                <div style="background-color: #D1E9F6; padding: 10px; border-radius: 10px; margin-bottom: 5px;">
-                    {truncated_human_goal}
-                </div>
-                """, unsafe_allow_html=True
-            )
-        with st.expander("Detailed Goal"):
-            st.write(profile.agent_goals[0])
-
-    with col2:
-        st.markdown("**AI Agent Goal**")
-        truncated_ai_goal = truncate_text(profile.agent_goals[1])
-        st.markdown(
-                f"""
-                <div style="background-color: #D1E9F6; padding: 10px; border-radius: 10px; margin-bottom: 5px;">
-                    {truncated_ai_goal}
-                </div>
-                """, unsafe_allow_html=True
-            )
-        with st.expander("Detailed Goal"):
-            st.write(profile.agent_goals[1])
 
     # Foldable green container for additional information
     with st.expander("Additional Information", expanded=False):
