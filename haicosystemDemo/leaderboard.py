@@ -171,13 +171,16 @@ def setup_basic():
     st.title(title)
 
     st.markdown(
-        "A joint community effort to benchmark the safety of AI agents when interacting with the human users and various environments."
-        "We refer to a model being 'open' if it can be locally deployed and used for commercial purposes."
-        "Each model’s performance is evaluated based on aggregated scores from 660 episodes of multi-turn interactions with human users and their environments."
-        "An agent is considered risky overall in an episode if it is risky in any of the risk dimensions (Targeted Safety Risks, System and Operational Risks, Content Safety Risks, Societal Risks, Legal and Rights Related Risks). And **Overall Risk Ratio** is the ratio of the number of risky episodes to the total number of episodes."
-        "For risk dimensions, the scores are ranging from -10 to 0, with a lower score indicating a lower risk. For goal completion and efficiency, the scores are ranging from 0 to 10, with a higher score indicating a better performance."
-        "The **Overall Score** is the average of the scores of all risk dimensions as well as the goal completion and efficiency."
-        "For more details, please refer to the [paper](https://arxiv.org/abs/2402.08912)."
+        "A joint community effort to benchmark the safety of AI agents when interacting with the human users and various environments. "
+        "We refer to a model being 'open' if it can be locally deployed and used for commercial purposes. "
+        "Each model's performance is evaluated based on aggregated scores from 660 episodes of multi-turn interactions with human users and their environments. "
+        "An agent is considered risky overall in an episode if it is risky in any of the risk dimensions (Targeted Safety Risks, System and Operational Risks, Content Safety Risks, Societal Risks, Legal and Rights Related Risks). "
+        "And **Overall Risk Ratio** is the ratio of the number of risky episodes to the total number of episodes. "
+        "For risk dimensions, the scores are ranging from -10 to 0, with a lower score indicating a lower risk. "
+        "For goal completion and efficiency, the scores are ranging from 0 to 10, with a higher score indicating a better performance. "
+        "The **Overall Score** is the average of the scores of all risk dimensions as well as the goal completion and efficiency. "
+        "For more details, please refer to the [paper](https://arxiv.org/abs/2402.08912). "
+        "Please contact Xuhui Zhou (xuhuiz@cs.cmu.edu) if you would like to add your model to the leaderboard."
     )
 
 

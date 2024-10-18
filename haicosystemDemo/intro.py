@@ -21,7 +21,7 @@ local_css("./css/style.css")
 col1, col2, col3 = st.columns([1,10,1], gap="small", vertical_alignment="center")
 
 with col2:
-    st.image("./figs/haico_banner.svg", use_column_width=True)
+    st.image("./figs/haico_banner_v2.svg", use_column_width=True)
 
     st.html("""
     <div style="text-align: left; font-size: 1.3rem; line-height: 1.8;">
@@ -70,16 +70,26 @@ with col2:
     <span class="author-block"><sup>4</sup>Stanford University</span>
     </div>
     """)
-
-    col1, col2, col3, col4, col5, col6 = st.columns([3,3,3,4,2,2], gap="small", vertical_alignment="center")
+    with open("./data/paper.pdf", "rb") as pdf_file:
+        PDFbyte = pdf_file.read()
+    col1, col2, col3, col4, col5, col6 = st.columns([3,3,3,3,4,2], gap="small", vertical_alignment="center")
     with col1:
-        st.link_button(label="Paper", url="https://arxiv.org/abs/2409.16427", use_container_width=True, icon=":material/description:")
+        #st.link_button(label="Paper", url="https://arxiv.org/abs/2409.16427", use_container_width=True, icon=":material/description:")
+        st.download_button(
+            label="Paper",
+            icon=":material/description:",
+            data=PDFbyte,
+            file_name="haicosystem-paper.pdf",
+            use_container_width=True,
+        )
     with col2:
-        st.link_button(label="Github", url="https://github.com/XuhuiZhou/HAI-Cosys", use_container_width=True, icon=":material/code:")
+        st.link_button(label="arXiv", url="https://arxiv.org/abs/2409.16427", use_container_width=True, icon=":material/keep_public:")
     with col3:
-        st.link_button(label="Data", url="https://huggingface.co/datasets/Xuhui/haicosystem", use_container_width=True, icon=":material/data_array:")
+        st.link_button(label="Github", url="https://github.com/XuhuiZhou/HAI-Cosys", use_container_width=True, icon=":material/code:")
     with col4:
-    #     st.link_button(label="Demo", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", use_container_width=True, icon=":material/play_circle:")
+        st.link_button(label="Data", url="https://huggingface.co/datasets/Xuhui/haicosystem", use_container_width=True, icon=":material/data_array:")
+    with col5:
+        # st.link_button(label="Demo", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", use_container_width=True, icon=":material/play_circle:")
     # with col5:
         if 'show_podcast' not in st.session_state:
             st.session_state['show_podcast'] = False
@@ -96,7 +106,8 @@ with col2:
     st.write("")
     st.write("")
 
-    st.image("./figs/Haicosystem_intro_fig.svg", use_column_width=True, caption="HAICOSYSTEM enables simultaneous simulation of interactions between human users, AI agents, and environments. The left side shows an example scenario from 132 scenarios in HAICOSYSTEM covering diverse domains and user intent types (benign and malicious). The right side shows an example simulation where the AI agent follows the human user's instructions to prescribe a controlled medication to a patient without verification. After the simulation, the framework provides a set of metrics (HAICOSYSTEM-EVAL) to evaluate the safety of the AI agent as well as its performance.")
+    # st.image("./figs/Haicosystem_intro_fig.svg", use_column_width=True, caption="HAICOSYSTEM enables simultaneous simulation of interactions between human users, AI agents, and environments. The left side shows an example scenario from 132 scenarios in HAICOSYSTEM covering diverse domains and user intent types (benign and malicious). The right side shows an example simulation where the AI agent follows the human user's instructions to prescribe a controlled medication to a patient without verification. After the simulation, the framework provides a set of metrics (HAICOSYSTEM-EVAL) to evaluate the safety of the AI agent as well as its performance.")
+    st.video("./data/haicosystem-video-short-v3.mp4")
 
 
     st.markdown("""
@@ -172,7 +183,7 @@ with col2:
     
     # if st.button("View All Scenarios", icon=":material/photo_library:", use_container_width=True):
     #     st.switch_page("./haicosystemDemo/display_scenarios.py")
-    stylable_button("View All Scenarios", icon=":material/photo_library:", use_container_width=True, color="#19a178", switch_page="./haicosystemDemo/display_scenarios.py")
+    stylable_button("View All Scenarios", icon=":material/photo_library:", use_container_width=True, color="#19a178", switch_page="./haicosystemDemo/display_scenarios.py", new_tab=True)
 
     st.markdown("""---""")
 
@@ -203,7 +214,7 @@ with col2:
 
     # if st.button("View Simulations and Evaluations", icon=":material/live_tv:", use_container_width=True):
     #     st.switch_page("./haicosystemDemo/display_episode.py")
-    stylable_button("View Simulations and Evaluations", icon=":material/live_tv:", use_container_width=True, color="#19a178", switch_page="./haicosystemDemo/display_episode.py")
+    stylable_button("View Simulations and Evaluations", icon=":material/live_tv:", use_container_width=True, color="#19a178", switch_page="./haicosystemDemo/display_episode.py", new_tab=True)
 
     st.markdown("""---""")
 
@@ -256,7 +267,7 @@ For an agent, the <span style="font-style: italic;">risk ratio</span> of each di
     """, unsafe_allow_html=True)
     # if st.button("View Leaderboard (13 models)", icon=":material/leaderboard:", use_container_width=True):
     #     st.switch_page("./haicosystemDemo/leaderboard.py")
-    stylable_button("View Leaderboard (13 models)", icon=":material/leaderboard:", use_container_width=True, color="#19a178", switch_page="./haicosystemDemo/leaderboard.py")
+    stylable_button("View Leaderboard (13 models)", icon=":material/leaderboard:", use_container_width=True, color="#19a178", switch_page="./haicosystemDemo/leaderboard.py", new_tab=True)
 
     st.markdown("""
     <div style="padding: 0 px; margin: 20px 0;">

@@ -9,7 +9,7 @@ def local_css(file_name):
 local_css("./css/style.css")
 
 def display_scenarios():
-    st.title("HAICosystem Scenarios")
+    st.title("HAICOSYSTEM Scenarios")
     
     # Fetch all environment profiles
     envs = HaiEnvironmentProfile.find().all()
