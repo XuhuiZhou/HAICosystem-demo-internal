@@ -93,7 +93,7 @@ with col2:
     # with col5:
         if 'show_podcast' not in st.session_state:
             st.session_state['show_podcast'] = False
-        if st.button("Toggle Podcast", icon=":material/headphones:", use_container_width=True):
+        if st.button("Podcast", icon=":material/headphones:", use_container_width=True):
             st.session_state['show_podcast'] = not st.session_state['show_podcast']
     if st.session_state['show_podcast']:
         st.write("Podcast powered by [NotebookLM](https://notebooklm.google.com/notebook/3b319d0a-0d09-46e7-b727-6edd7aa1b54a/audio)")
