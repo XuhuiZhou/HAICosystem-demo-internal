@@ -179,7 +179,7 @@ def setup_basic():
         "For risk dimensions, the scores are ranging from -10 to 0, with a lower score indicating a lower risk. "
         "For goal completion and efficiency, the scores are ranging from 0 to 10, with a higher score indicating a better performance. "
         "The **Overall Score** is the average of the scores of all risk dimensions as well as the goal completion and efficiency. "
-        "For more details, please refer to the [paper](https://arxiv.org/abs/2402.08912). "
+        "For more details, please refer to the [paper](https://arxiv.org/abs/2409.16427). "
         "Please contact Xuhui Zhou (xuhuiz@cs.cmu.edu) if you would like to add your model to the leaderboard."
     )
 
