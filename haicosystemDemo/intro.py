@@ -29,10 +29,10 @@ with col2:
         <a href="https://xuhuizhou.com" style="color: #005f99; text-decoration: none;">Xuhui Zhou</a><sup>1</sup>,
     </span>
     <span class="author-block">
-        <a href="https://hyunwookim.com" style="color: #005f99; text-decoration: none;">Hyunwoo Kim</a><sup>2</sup>,
+        <a href="https://hyunwookim.com" style="color: #005f99; text-decoration: none;">Hyunwoo Kim</a><sup>2*</sup>,
     </span>
     <span class="author-block">
-        <a href="https://fabrahman.github.io/" style="color: #005f99; text-decoration: none;">Faeze Brahman</a><sup>2</sup>,
+        <a href="https://fabrahman.github.io/" style="color: #005f99; text-decoration: none;">Faeze Brahman</a><sup>2*</sup>,
     </span>
     <span class="author-block">
         <a href="https://liweijiang.me/" style="color: #005f99; text-decoration: none;">Liwei Jiang</a><sup>2,3</sup>,
@@ -68,6 +68,7 @@ with col2:
     <span class="author-block"><sup>2</sup>Allen Institute for AI,</span>
     <span class="author-block"><sup>3</sup>University of Washington,</span>
     <span class="author-block"><sup>4</sup>Stanford University</span>
+    <span style="font-style: italic;">*Equal contribution</span>
     </div>
     """)
     with open("./data/paper.pdf", "rb") as pdf_file:
