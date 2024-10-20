@@ -88,7 +88,7 @@ with col2:
     with col3:
         st.link_button(label="Github", url="https://github.com/XuhuiZhou/HAI-Cosys", use_container_width=True, icon=":material/code:")
     with col4:
-        st.link_button(label="Data", url="https://huggingface.co/datasets/Xuhui/haicosystem", use_container_width=True, icon=":material/data_array:")
+        st.link_button(label="Data", url="https://huggingface.co/datasets/Xuhui/haicosystem", use_container_width=True, icon=":material/database:")
     with col5:
         # st.link_button(label="Demo", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", use_container_width=True, icon=":material/play_circle:")
     # with col5:
