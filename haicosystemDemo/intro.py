@@ -76,13 +76,15 @@ with col2:
     col1, col2, col3, col4, col5, col6 = st.columns([3,3,3,3,4,2], gap="small", vertical_alignment="center")
     with col1:
         #st.link_button(label="Paper", url="https://arxiv.org/abs/2409.16427", use_container_width=True, icon=":material/description:")
-        st.download_button(
-            label="Paper",
-            icon=":material/description:",
-            data=PDFbyte,
-            file_name="haicosystem-paper.pdf",
-            use_container_width=True,
-        )
+        # st.download_button(
+        #     label="Paper",
+        #     icon=":material/description:",
+        #     data=PDFbyte,
+        #     file_name="haicosystem-paper.pdf",
+        #     use_container_width=True,
+        # )
+        if st.button("Paper", icon=":material/description:", use_container_width=True):
+            st.switch_page("./haicosystemDemo/paper.py")
     with col2:
         st.link_button(label="arXiv", url="https://arxiv.org/abs/2409.16427", use_container_width=True, icon=":material/keep_public:")
     with col3:
@@ -106,7 +108,6 @@ with col2:
     st.write("")
     st.write("")
     st.write("")
-
     # st.image("./figs/Haicosystem_intro_fig.svg", use_column_width=True, caption="HAICOSYSTEM enables simultaneous simulation of interactions between human users, AI agents, and environments. The left side shows an example scenario from 132 scenarios in HAICOSYSTEM covering diverse domains and user intent types (benign and malicious). The right side shows an example simulation where the AI agent follows the human user's instructions to prescribe a controlled medication to a patient without verification. After the simulation, the framework provides a set of metrics (HAICOSYSTEM-EVAL) to evaluate the safety of the AI agent as well as its performance.")
     st.video("./data/haicosystem-video-short-v3.mp4")
 
