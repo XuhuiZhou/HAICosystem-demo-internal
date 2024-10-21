@@ -86,7 +86,7 @@ with col2:
         if st.button("Paper", icon=":material/description:", use_container_width=True):
             st.switch_page("./haicosystemDemo/paper.py")
     with col2:
-        st.link_button(label="arXiv", url="https://arxiv.org/abs/2409.16427", use_container_width=True, icon=":material/keep_public:")
+        st.link_button(label="arXiv", url="https://arxiv.org/abs/2409.16427", use_container_width=True, icon=":material/unarchive:")
     with col3:
         st.link_button(label="Github", url="https://github.com/XuhuiZhou/HAI-Cosys", use_container_width=True, icon=":material/code:")
     with col4:
