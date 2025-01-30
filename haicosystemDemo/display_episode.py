@@ -87,55 +87,58 @@ def display_episode(pk: str = "") -> None:
             print("Tag:", tag)
             tag_index = TAGS.index(tag)
             print("Tag index:", tag_index)
+
         else:
             tag_index = 4 # default tag index
 
-        # tag_option = st.selectbox(
-        #     "Which tag do you want to see?",
-        #     TAGS,
-        #     index=tag_index,
-        #     placeholder="Select contact method...",
-        # )
-        model_option = st.selectbox(
-            "Which model do you want to see?",
-            TAGS_MAPPING.keys(),
-            index=0,
-            placeholder="Select contact method...",
-        )
-        tag_option = TAGS_MAPPING[model_option][0]
-        st.session_state.episode_list, st.session_state.episode_list_len, st.session_state.episode_code_name, st.session_state.domain = episode_list(tag_option)
-        if st.session_state.episode_list_len == 0:
-            st.write("No episode found.")
-        else:
-            # Select an episode
-            if st.session_state.episode_code_name:
-                if st.session_state.coming_from_link:
-                    for i in range(st.session_state.episode_list_len):
-                        if st.session_state.episode_list[i].pk == st.query_params.pk:
-                            episode_index = i
-                            break
-                    st.session_state.coming_from_link = False
-                try:
-                    episode_choice = st.selectbox(
-                        "Which episode would you like to see?",
-                        [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)],
-                        index=episode_index,
-                    )
-                except NameError:
-                    episode_choice = st.selectbox(
-                        "Which episode would you like to see?",
-                        [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)],
-                    )
-                episode_number = episode_choice.split("-")[0]
+            # tag_option = st.selectbox(
+            #     "Which tag do you want to see?",
+            #     TAGS,
+            #     index=tag_index,
+            #     placeholder="Select contact method...",
+            # )
+            model_option = st.selectbox(
+                "Which model do you want to see?",
+                TAGS_MAPPING.keys(),
+                index=0,
+                placeholder="Select contact method...",
+            )
+            tag_option = TAGS_MAPPING[model_option][0]
+            st.session_state.episode_list, st.session_state.episode_list_len, st.session_state.episode_code_name, st.session_state.domain = episode_list(tag_option)
+            if st.session_state.episode_list_len == 0:
+                st.write("No episode found.")
             else:
-                episode_number = st.text_input(f"Enter episode number (0-{st.session_state.episode_list_len}):", value="0")
-            episode = st.session_state.episode_list[int(episode_number)]  # type: ignore
-            if st.session_state.episode_code_name:
-                episode_env = HaiEnvironmentProfile.get(pk=episode.environment)
-                render_hai_environment_profile(episode_env)
-            st.write(f"Episode retrieved with pk: {episode.pk}")
-            update_params(episode.pk)
-            assert isinstance(episode, EpisodeLog)
+                # Select an episode
+                if st.session_state.episode_code_name:
+                    if st.session_state.coming_from_link:
+                        for i in range(st.session_state.episode_list_len):
+                            if st.session_state.episode_list[i].pk == st.query_params.pk:
+                                episode_index = i
+                                break
+                        st.session_state.coming_from_link = False
+                    try:
+                        episode_choice = st.selectbox(
+                            "Which episode would you like to see?",
+                            [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)],
+                            index=episode_index,
+                        )
+                    except NameError:
+                        episode_choice = st.selectbox(
+                            "Which episode would you like to see?",
+                            [f"{str(i)}-[{st.session_state.domain[i]}]-{st.session_state.episode_code_name[i]}" for i in range(st.session_state.episode_list_len)],
+                        )
+                    episode_number = episode_choice.split("-")[0]
+                else:
+                    episode_number = st.text_input(f"Enter episode number (0-{st.session_state.episode_list_len}):", value="0")
+                episode = st.session_state.episode_list[int(episode_number)]  # type: ignore
+        try:
+            episode_env = HaiEnvironmentProfile.get(pk=episode.environment)
+            render_hai_environment_profile(episode_env)
+        except Exception as e:
+            st.write(f"Failed to retrieve episode environment: {e}")
+        st.write(f"Episode retrieved with pk: {episode.pk}")
+        update_params(episode.pk)
+        assert isinstance(episode, EpisodeLog)
     messages = render_for_humans(episode)
     streamlit_rendering(messages)
 
